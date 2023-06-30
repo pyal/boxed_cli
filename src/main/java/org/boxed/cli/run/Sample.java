@@ -6,6 +6,10 @@ import org.boxed.cli.json.JsonTools;
 import org.kohsuke.args4j.Option;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static org.boxed.cli.General.listT;
 
 /**
  * <pre>
@@ -25,6 +29,14 @@ public class Sample {
         private Integer number = 10;
         @Option(name = "-o", aliases = "--option", usage = "input boolean option")
         private Boolean option = false;
+
+        private String testParams = "Nothing";
+        @Option(name = "-t", usage = "test param read using function with verification")
+        private void getTestString(String t) {
+            List<String> opt = listT("Item", "Nothing", "Something");
+            Boolean ok = opt.stream().anyMatch(x -> x.equalsIgnoreCase(t));
+            if (!ok) throw new RuntimeException("Bad param " + t + " have to be one of " + opt.stream().collect(Collectors.joining(", ")));
+        }
 
         @Override
         public void run() {

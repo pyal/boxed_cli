@@ -83,6 +83,7 @@ public class Cli {
         JTry<Boolean> toDo = exec.parse(args, null);
         toDo.recover(e -> {
             LOG.error("Failed parsing command line: " + listT(args));
+            LOG.error("Got exception: ", e);
             LOG.error("Usage: " + exec.usage());
             rethrow(e);
         });
