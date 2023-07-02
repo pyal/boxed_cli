@@ -32,10 +32,10 @@ public class Sample {
 
         private String testParams = "Nothing";
         @Option(name = "-t", usage = "test param read using function with verification")
-        private void getTestString(String t) {
+        private void testStringSetter(String t) {
             List<String> opt = listT("Item", "Nothing", "Something");
-            Boolean ok = opt.stream().anyMatch(x -> x.equalsIgnoreCase(t));
-            if (!ok) throw new RuntimeException("Bad param " + t + " have to be one of " + opt.stream().collect(Collectors.joining(", ")));
+            boolean ok = opt.stream().anyMatch(x -> x.equalsIgnoreCase(t));
+            if (!ok) throw new RuntimeException("Bad param " + t + " have to be one of " + String.join(", ", opt));
         }
 
         @Override

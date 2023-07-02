@@ -19,15 +19,16 @@ public class ExceptionHandler {
      * @return  exception stack string
      */
     public static String exceptionToString(Throwable e, Integer limit) {
-        String ret = "exceptionToString";
+        String ret;
         try {
             if (e == null) return "null exception";
-            ret = "Throwable: " + e.toString() +
-                    "\nStack:\n" + Arrays.stream(e.getStackTrace()).map(x -> x.toString())
+            ret = "Throwable: " + e +
+                    "\nStack:\n" + Arrays.stream(e.getStackTrace()).map(StackTraceElement::toString)
                     .collect(Collectors.joining("\n"));
         } catch (Throwable a) {
-            ret = "Failed parsing exception: " + a.toString();
+            ret = "Failed parsing exception: " + a;
         }
+        if (limit <= 0) return ret;
         return ret.substring(0, min(limit, ret.length()));
     }
 

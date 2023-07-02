@@ -49,16 +49,13 @@ public class Serializer {
         }
 
         public static <T extends Serializable> byte[] object2binary(T x) {
-            try {
+            return rethrow(() -> {
                 ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
                 ObjectOutputStream out = new ObjectOutputStream(byteStream);
                 out.writeObject(x);
                 out.close();
                 return byteStream.toByteArray();
-            } catch (IOException e) {
-                e.printStackTrace();
-                return null;
-            }
+            });
         }
 
         public static <T extends Serializable> T binarystr2object(String rowStr, boolean compress) {
@@ -68,16 +65,14 @@ public class Serializer {
         }
 
         public static <T extends Serializable> T binary2object(byte[] readByte) {
-            try {
+            return rethrow(() -> {
                 ByteArrayInputStream byteStream = new ByteArrayInputStream(readByte);
                 ObjectInputStream input = new ObjectInputStream(byteStream);
+                @SuppressWarnings("unchecked")
                 T obj = (T) input.readObject();
                 input.close();
                 return obj;
-            } catch (IOException | ClassNotFoundException e) {
-                e.printStackTrace();
-                return null;
-            }
+            });
         }
     }
 }

@@ -16,34 +16,35 @@ public class JTryTest extends BaseTest {
         JTry<Integer> excRes = JTry.of(() -> {
             throw new ArrayIndexOutOfBoundsException("BAD");
         });
+        LOG.info(excRes);
         JTry<Integer> nullRes = JTry.of(() -> null);
         JTry<Integer> okRes = JTry.of(() -> 1);
         Assert.assertTrue(okRes.isOk());
         Assert.assertTrue(nullRes.isOk());
-        Assert.assertTrue(!excRes.isOk());
-        Assert.assertTrue(nullRes.getOrThrow() == null);
+        Assert.assertFalse(excRes.isOk());
+        Assert.assertNull(nullRes.getOrThrow());
         Assert.assertEquals(1L, okRes.getOrThrow().longValue());
-        testMethodFailure(() -> excRes.getOrThrow(), "Have to throw exception");
+        testMethodFailure(excRes::getOrThrow, "Have to throw exception");
         Assert.assertEquals(5L, excRes.recover(e -> 5).getOrThrow().longValue());
-        Assert.assertEquals(null, nullRes.recover(e -> 5).getOrThrow());
+        Assert.assertNull(nullRes.recover(e -> 5).getOrThrow());
         Assert.assertEquals(6L, nullRes.map(r -> 6).getOrThrow().longValue());
 
         Assert.assertEquals(5L, excRes.getOrElse(5).longValue());
         Assert.assertEquals(1L, okRes.getOrElse(10).longValue());
         Map<String, Object> m2 = mapKV("m", mapKV("a", "str"), "root", "4");
-        JTry a = JTry.of(() -> forceClc(JsonTools.<String>getProperty(m2, "root")));
+        JTry<String> a = JTry.of(() -> forceClc(JsonTools.<String>getProperty(m2, "root")));
         Assert.assertTrue(a.isOk());
             //Enforce variable calculation
-        JTry b = JTry.of(() -> forceClc(JsonTools.<Integer>getProperty(m2, "root")));
-        Assert.assertTrue(!b.isOk());
+        JTry<Integer> b = JTry.of(() -> forceClc(JsonTools.<Integer>getProperty(m2, "root")));
+        Assert.assertFalse(b.isOk());
             //Variable is not calculated here!!!
-        JTry c = JTry.of(() -> {
+        JTry<String> c = JTry.of(() -> {
             JsonTools.<Integer>getProperty(m2, "root");
         });
             //Variable is  calculated here!!!
         JTry cccc = JTry.of(() -> JsonTools.<Integer>getProperty(m2, "root"));
-        Assert.assertTrue(!cccc.isOk());
-        Assert.assertTrue(JsonTools.<String>getProperty(m2, "root1") == null);
-        Assert.assertTrue(JsonTools.<Integer>getProperty(m2, "root1") == null);
+        Assert.assertFalse(cccc.isOk());
+        Assert.assertNull(JsonTools.<String>getProperty(m2, "root1"));
+        Assert.assertNull(JsonTools.<Integer>getProperty(m2, "root1"));
     }
 }

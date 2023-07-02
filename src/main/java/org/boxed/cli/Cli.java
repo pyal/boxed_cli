@@ -79,7 +79,7 @@ public class Cli {
      */
     @VisibleForTesting
     static Boolean mainRunInternal(String[] args, CliBasic exec) {
-        TimerData.IterationTimer timer = new TimerData.IterationTimer(1.);
+        Timer.IterationTimer timer = new Timer.IterationTimer(1.);
         JTry<Boolean> toDo = exec.parse(args, null);
         toDo.recover(e -> {
             LOG.error("Failed parsing command line: " + listT(args));
@@ -116,11 +116,11 @@ public class Cli {
         @Option(name = "-d", aliases = "--debug", usage = "provide debug level for index: ALL, ALL|org.boxed.cli ", metaVar = "OFF, ALL, WARN, DEBUG")
         public void debugLevelSetter(String x) {
             Set<String> debugLevelSet = Lists.newArrayList(DebugLevel.class.getEnumConstants()).stream().
-                    map(y -> y.toString()).collect(Collectors.toSet());
+                    map(Enum::toString).collect(Collectors.toSet());
             ArrayList<String> levelArr = Lists.newArrayList(x.split("\\|"));
             debugLevel = levelArr.get(0);
             Preconditions.checkArgument(debugLevelSet.contains(debugLevel),
-                    "Bad input debugLevel: " + debugLevel + " for input " + x + " possible values: " + debugLevelSet.stream().collect(Collectors.joining(" ")));
+                    "Bad input debugLevel: " + debugLevel + " for input " + x + " possible values: " + String.join(" ", debugLevelSet));
             String logName = (levelArr.size() < 2) ? "" : levelArr.get(1);
             setDebugLevel(debugLevel, logName);
         }
@@ -144,11 +144,11 @@ public class Cli {
                 out.write("\nExample: \ncli ".getBytes());
                 parser.printSingleLineUsage(out);
                 if (cliArgs != null) out.write(("\nArguments provided:\n[" +
-                        Lists.newArrayList(cliArgs).stream().collect(Collectors.joining(" ")) + "]").getBytes());
+                        String.join(" ", Lists.newArrayList(cliArgs)) + "]").getBytes());
             } catch (Throwable e) {
                 LOG.error("Failed printing message:\n", e);
             }
-            return "Command options:\n" + out.toString();
+            return "Command options:\n" + out;
         }
 
         /**
@@ -228,20 +228,19 @@ public class Cli {
         public MultiTaskRunner(MultiTaskBasic multiTaskBasic) {
             this.multiTaskBasic = multiTaskBasic;
             class2option = multiTaskBasic.getSubcommands().stream().
-                    collect(Collectors.toMap(x -> x.getValue(), x -> x.getKey()));
+                    collect(Collectors.toMap(Pair::getValue, Pair::getKey));
         }
 
         @Override
         public String usage() {
             String str = "Top level params:\n" + multiTaskBasic.usage();
-            str += "\nDetailed all modes help:\n" + multiTaskBasic.getSubcommands().stream().map(x -> {
-                        return JTry.of(() -> "  Mode:   ======== " + x.getKey() + " ======\n" +
-                                ((CliBasic) x.getValue().getDeclaredConstructor().newInstance()).usage() + "\n"
-                        ).recover(e -> {
-                            LOG.error("Parsing description exception caught: ", e);
-                            return "ERROR Parsing description exception caught: " + exceptionToString(e);
-                        }).getOrThrow();
-                    }
+            str += "\nDetailed all modes help:\n" + multiTaskBasic.getSubcommands().stream().map(x -> JTry.of(() ->
+                    "  Mode:   ======== " + x.getKey() + " ======\n" +
+                    ((CliBasic) x.getValue().getDeclaredConstructor().newInstance()).usage() + "\n"
+            ).recover(e -> {
+                LOG.error("Parsing description exception caught: ", e);
+                return "ERROR Parsing description exception caught: " + exceptionToString(e);
+            }).getOrThrow()
             ).collect(Collectors.joining("\n"));
             return str;
         }
@@ -255,7 +254,7 @@ public class Cli {
 
         @Override
         public JTry<Boolean> parse(String[] args, Supplier<String> usageString) {
-            JTry<Boolean> toDo = multiTaskBasic.parse(args, () -> usage());
+            JTry<Boolean> toDo = multiTaskBasic.parse(args, this::usage);
             if (!toDo.isOk()) return toDo;
             return JTry.of(() -> {
                 CliBasic cli = multiTaskBasic.getCurrentCli();
