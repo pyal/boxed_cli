@@ -1,7 +1,6 @@
 package org.boxed.cli;
 
 import com.google.common.collect.Lists;
-import junit.framework.TestCase;
 import org.junit.Assert;
 import org.junit.Test;
 

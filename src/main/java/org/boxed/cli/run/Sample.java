@@ -7,7 +7,6 @@ import org.kohsuke.args4j.Option;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.boxed.cli.General.listT;
 

@@ -2,13 +2,7 @@ package org.boxed.cli;
 
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.core.config.Configurator;
-import org.boxed.cli.run.MultiSample;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
@@ -16,16 +10,10 @@ import org.kohsuke.args4j.spi.SubCommand;
 import org.kohsuke.args4j.spi.SubCommandHandler;
 import org.kohsuke.args4j.spi.SubCommands;
 
-import java.lang.annotation.Annotation;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import static org.boxed.cli.General.listT;
-import static org.boxed.cli.PrettyNumberFormater.prettyNumber;
-import static org.boxed.cli.PrettyNumberFormater.prettyTime;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 

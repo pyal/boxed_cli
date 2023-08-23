@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="warn"
+               packages="org.boxed.cli.log4j.plugin">
+  <Appenders>
+    <Console name="Console" target="SYSTEM_OUT">
+      <PatternLayout>
+        <pattern>%d{HH:mm:ss}:%green{%d{SSS}} [%thread] %highlight{%p} %-30logger{.}(%F:%L) %highlight{%-20M}     %msg%n</pattern>
+      </PatternLayout>
+    </Console>
+  </Appenders>
+
+  <Loggers>
+    <Logger name="sun.reflect" additivity="true"  level="${env:ROOT_LOG_LEVEL:-error}">
+      <AppenderRef ref="Console"/>
+    </Logger>
+    <Logger name="com.google.api.client.http" additivity="false" level="${env:ROOT_LOG_LEVEL:-error}">
+      <AppenderRef ref="Console"/>
+    </Logger>
+    <Root level="info">
+      <AppenderRef ref="Console"/>
+    </Root>
+  </Loggers>
+</Configuration>

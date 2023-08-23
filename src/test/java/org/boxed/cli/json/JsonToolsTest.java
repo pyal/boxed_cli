@@ -11,10 +11,9 @@ import org.junit.Test;
 
 import java.util.Map;
 
-import static org.boxed.cli.json.JsonTools.getProperty;
 import static org.boxed.cli.General.mapKV;
-import static org.boxed.cli.SupLog.setDebugTest;
 import static org.boxed.cli.JsonCvtScala.obj2StrScala;
+import static org.boxed.cli.SupLog.setDebugTest;
 import static org.boxed.cli.json.JsonTools.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

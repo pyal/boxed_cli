@@ -1,6 +1,5 @@
 package org.boxed.cli;
 
-import junit.framework.TestCase;
 import org.junit.Test;
 
 import static org.boxed.cli.ExceptionHandler.exceptionToString;
